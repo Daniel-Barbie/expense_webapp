@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RequestMapping("/api/v1/expense")
 @RestController
@@ -26,5 +27,21 @@ public class ExpenseController {
     @GetMapping
     public List<Expense> selectAllExpenses() {
         return expenseService.selectAllExpenses();
+    }
+
+    @GetMapping(path = "{id}")
+    public Expense selectExpenseById(@PathVariable("id") UUID id) {
+        return expenseService.selectExpenseById(id)
+                .orElse(null);
+    }
+
+    @DeleteMapping(path = "{id}")
+    public void deleteExpenseById(@PathVariable("id") UUID id) {
+        expenseService.deleteExpense(id);
+    }
+
+    @PutMapping(path = "{id}")
+    public void updateExpense(@PathVariable("id") UUID id, @RequestBody Expense expenseToUpdate) {
+        expenseService.updateExpense(id, expenseToUpdate);
     }
 }
