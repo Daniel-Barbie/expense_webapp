@@ -3,8 +3,10 @@ package com.example.demo.api;
 import com.example.demo.model.Expense;
 import com.example.demo.service.ExpenseService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,7 +22,7 @@ public class ExpenseController {
     }
 
     @PostMapping
-    public void addExpense(@RequestBody Expense expense) {
+    public void addExpense(@Valid @NonNull @RequestBody Expense expense) {
         expenseService.addExpense(expense);
     }
 
@@ -41,7 +43,7 @@ public class ExpenseController {
     }
 
     @PutMapping(path = "{id}")
-    public void updateExpense(@PathVariable("id") UUID id, @RequestBody Expense expenseToUpdate) {
+    public void updateExpense(@PathVariable("id") UUID id, @Valid @NonNull @RequestBody Expense expenseToUpdate) {
         expenseService.updateExpense(id, expenseToUpdate);
     }
 }

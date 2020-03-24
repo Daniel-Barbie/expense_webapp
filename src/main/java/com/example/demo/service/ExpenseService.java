@@ -16,7 +16,7 @@ public class ExpenseService {
     private final ExpenseDao expenseDao;
 
     @Autowired
-    public ExpenseService(@Qualifier("fakeDao")ExpenseDao expenseDao) {
+    public ExpenseService(@Qualifier("postgres")ExpenseDao expenseDao) {
         this.expenseDao = expenseDao;
     }
 

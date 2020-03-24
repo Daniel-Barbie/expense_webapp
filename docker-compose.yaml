@@ -1,0 +1,29 @@
+version: '3.1'
+
+services:
+
+  postgres:
+    container_name: docker_postgres
+    networks:
+      - gateway
+    ports:
+      - "5432:5432"
+    hostname: postgres
+    image: postgres:alpine
+    volumes:
+      - ./data/db:/data/db
+
+  spring:
+    build: .
+    container_name: docker_spring
+    networks:
+      - gateway
+    ports:
+      - "8080:8080"
+    hostname: spring
+    depends_on:
+      - postgres
+
+networks:
+  gateway:
+    driver: "bridge"
