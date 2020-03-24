@@ -2,6 +2,7 @@ package com.example.demo.dao;
 
 import com.example.demo.model.Expense;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface ExpenseDao {
@@ -12,4 +13,6 @@ public interface ExpenseDao {
             UUID id = UUID.randomUUID();
             return insertExpense(id, expense);
         }
+
+        List<Expense> selectAllExpenses();
 }

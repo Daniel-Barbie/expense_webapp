@@ -17,4 +17,11 @@ public class FakeExpenseDataAccessService implements ExpenseDao {
         DB.add(new Expense(id,expense.getName()));
         return 1;
     }
+
+    @Override
+    public List<Expense> selectAllExpenses() {
+        return DB;
+    }
+
+
 }
