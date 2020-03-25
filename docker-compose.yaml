@@ -1,4 +1,4 @@
-version: '3.1'
+version: '3.4'
 
 services:
 
@@ -6,16 +6,21 @@ services:
     container_name: docker_postgres
     networks:
       - gateway
-    #expose:
-    #  - 5432
-    ports:
-      - "5432:5432"
+    expose:
+      - 5432
+    #ports:
+    #  - "5432:5432"
     #hostname: postgres # unsure if needed
     image: postgres:alpine
     env_file:
       - database.env # configure postgres
     volumes:
-      - ./data/db:/data/db # persist data even if container shuts down
+      - type: volume
+        source: postgres-data
+        # note: this target is the default target of the postgres image for creating an anonymous volume
+        # if we specify a different target, postgres will still create an anonymous volume every run and NOT
+        # safe into our named volume
+        target: /var/lib/postgresql/data
 
   spring:
     build: .
@@ -32,5 +37,7 @@ networks:
   gateway:
     driver: "bridge"
 
-#volumes:
-#  postgres-data: # named volumes can be managed easier using docker-compose
+# top-level volumes key for named volumes. necessary when multiple services access the same volume
+# not our case here, but let's still leave it as it is
+volumes:
+  postgres-data: # named volumes can be managed easier using docker-compose
