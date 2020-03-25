@@ -1,7 +1,8 @@
-spring:
+app:
   datasource:
     #driver-class-name: org.postgresql.Driver
-    jdbc-url: jdbc:postgresql://localhost:5432/postgres_spring
+    # very important: do not connect to "localhost", but to "docker_postgres"!
+    jdbc-url: jdbc:postgresql://docker_postgres:5432/docker_postgres
     username: postgres
     password: password
     pool-size: 30
