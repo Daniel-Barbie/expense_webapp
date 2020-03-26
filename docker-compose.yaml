@@ -33,6 +33,7 @@ services:
     depends_on:
       - postgres
 
+
 networks:
   gateway:
     driver: "bridge"
