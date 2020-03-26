@@ -3,11 +3,13 @@ package com.example.demo;
 import com.example.demo.dao.ExpenseDataAccessService;
 import com.example.demo.model.Expense;
 import org.junit.Before;
-import org.junit.ClassRule;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.junit.jupiter.Container;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.Network;
 import org.testcontainers.containers.wait.strategy.HostPortWaitStrategy;
 
 import javax.sql.DataSource;
@@ -16,25 +18,27 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Testcontainers
 public class ExpenseDataAccessServiceTest {
 
     // Start experiment
-    @ClassRule
+    @Container
     public static GenericContainer<?> postgres =
         new GenericContainer<>("postgres:alpine")
         .withEnv("POSTGRES_USER", "postgres")
         .withEnv("POSTGRES_PASSWORD", "password")
         .withEnv("POSTGRES_DB", "docker_postgres")
         .withExposedPorts(5432)
-        //.withNetwork(Network.newNetwork())
-        //.withNetworkAliases("gateway")
+        .withNetwork(Network.newNetwork())
+        .withNetworkAliases("gateway")
         .waitingFor(new HostPortWaitStrategy());
 
+
     String address = postgres.getContainerIpAddress();
-    Integer port = postgres.getFirstMappedPort();
+    int port = postgres.getFirstMappedPort();
 
     public static final String DRIVER = "org.postgresql.Driver";
-    public final String JDBC_URL = "jdbc:postgresql://docker_postgres:"+ Integer.toString(port) +"/docker_postgres";
+    public final String JDBC_URL = "jdbc:postgresql://"+address+":"+ port +"/docker_postgres";
     public static final String USERNAME = "postgres";
     public static final String PASSWORD = "password";
 
@@ -136,7 +140,7 @@ public class ExpenseDataAccessServiceTest {
     private DataSource getDataSource(String JDBC_URL) {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName(ExpenseDataAccessServiceTest.DRIVER);
-        dataSource.setUrl(this.JDBC_URL);
+        dataSource.setUrl(JDBC_URL);
         dataSource.setUsername(ExpenseDataAccessServiceTest.USERNAME);
         dataSource.setPassword(ExpenseDataAccessServiceTest.PASSWORD);
         return dataSource;
