@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.Network;
 import org.testcontainers.containers.wait.strategy.HostPortWaitStrategy;
 
 import javax.sql.DataSource;
@@ -29,8 +28,8 @@ public class ExpenseDataAccessServiceTest {
         .withEnv("POSTGRES_PASSWORD", "password")
         .withEnv("POSTGRES_DB", "docker_postgres")
         .withExposedPorts(5432)
-        .withNetwork(Network.newNetwork())
-        .withNetworkAliases("gateway")
+        //.withNetwork(Network.newNetwork())
+        //.withNetworkAliases("gateway")
         .waitingFor(new HostPortWaitStrategy());
 
 
@@ -38,16 +37,27 @@ public class ExpenseDataAccessServiceTest {
     int port = postgres.getFirstMappedPort();
 
     public static final String DRIVER = "org.postgresql.Driver";
-    public final String JDBC_URL = "jdbc:postgresql://"+address+":"+ port +"/docker_postgres";
+    //public final String JDBC_URL = "jdbc:postgresql://"+address+":"+ port +"/docker_postgres";
+    public final String JDBC_URL = "jdbc:postgresql:///docker_postgres";
     public static final String USERNAME = "postgres";
     public static final String PASSWORD = "password";
-
+/*
     DataSource source = getDataSource(JDBC_URL);
     private JdbcTemplate jdbcTemplate = new JdbcTemplate(source);
+*/
+
+    // does not work without constructor & without "final"
+    private final JdbcTemplate jdbcTemplate;
 
     // End experiment
 
+    //what do we need this for?
     private ExpenseDataAccessService underTest;
+
+    // SEE IF IT MAKES SENSE TO HAVE A CONSTRUCTOR RIGHT HERE! -> maybe the only way to autoconfigure the jdbc template?
+    public ExpenseDataAccessServiceTest(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     @Before
     public void setUp() {
@@ -66,6 +76,8 @@ public class ExpenseDataAccessServiceTest {
         Expense expenseTwo = new Expense(idTwo, "Lidl");
 
         // Insert into db
+        System.out.println(underTest);
+        System.out.println(postgres.getLogs());
         underTest.insertExpense(idOne, expenseOne);
         underTest.insertExpense(idTwo, expenseTwo);
 
