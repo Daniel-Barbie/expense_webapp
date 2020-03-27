@@ -2,7 +2,7 @@ app:
   datasource:
     #driver-class-name: org.postgresql.Driver
     # very important: do not connect to "localhost", but to "docker_postgres"!
-    jdbc-url: jdbc:postgresql://docker_postgres:5432/docker_postgres
+    jdbc-url: jdbc:postgresql://docker_postgres:5432/docker_postgres?TC_INITSCRIPT=db/migration/init_mysql.sql
     username: postgres
     password: password
     pool-size: 30

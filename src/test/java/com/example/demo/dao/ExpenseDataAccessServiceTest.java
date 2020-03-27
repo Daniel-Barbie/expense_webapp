@@ -1,8 +1,9 @@
-package com.example.demo;
+package com.example.demo.dao;
 
-import com.example.demo.dao.ExpenseDataAccessService;
 import com.example.demo.model.Expense;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.junit.jupiter.Container;
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Testcontainers
 public class ExpenseDataAccessServiceTest {
@@ -41,13 +43,19 @@ public class ExpenseDataAccessServiceTest {
     public final String JDBC_URL = "jdbc:postgresql:///docker_postgres";
     public static final String USERNAME = "postgres";
     public static final String PASSWORD = "password";
-/*
+
+
     DataSource source = getDataSource(JDBC_URL);
     private JdbcTemplate jdbcTemplate = new JdbcTemplate(source);
-*/
+
+
 
     // does not work without constructor & without "final"
-    private final JdbcTemplate jdbcTemplate;
+
+/*
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+*/
 
     // End experiment
 
@@ -55,13 +63,19 @@ public class ExpenseDataAccessServiceTest {
     private ExpenseDataAccessService underTest;
 
     // SEE IF IT MAKES SENSE TO HAVE A CONSTRUCTOR RIGHT HERE! -> maybe the only way to autoconfigure the jdbc template?
-    public ExpenseDataAccessServiceTest(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
 
-    @Before
+    @BeforeAll
+
+
+    @BeforeEach
     public void setUp() {
         underTest = new ExpenseDataAccessService(jdbcTemplate);
+    }
+
+    @Test
+    void test() {
+        assertTrue(postgres.isRunning());
+        System.out.println("SUCCESS 1");
     }
 
     @Test
