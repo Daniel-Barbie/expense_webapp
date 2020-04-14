@@ -2,24 +2,33 @@ package com.example.demo;
 
 import com.example.demo.dao.ExpenseDataAccessService;
 import com.example.demo.model.Expense;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeAll;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 
 import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@SpringBootTest//(classes = ExpenseDataAccessService.class)
+@ActiveProfiles("test")
 public class ExpenseDataAccessServiceTest {
 
+    @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    //@Autowired
     private ExpenseDataAccessService underTest;
 
-    @Before
+    @BeforeEach
     public void setUp() {
+        //jdbcTemplate = new JdbcTemplate();
         underTest = new ExpenseDataAccessService(jdbcTemplate);
     }
 
@@ -72,6 +81,7 @@ public class ExpenseDataAccessServiceTest {
         assertThat(underTest.deleteExpenseById(idOne)).isEqualTo(1);
 
         // Get expenseOne by Id, which should not exist
+        // ERROR HERE:
         assertThat(underTest.selectExpenseById(idOne)).isEmpty();
 
         // Select all expenses from db, only expense with name "Lidl" should exist
@@ -90,7 +100,8 @@ public class ExpenseDataAccessServiceTest {
         int deleteResult = underTest.deleteExpenseById(id);
 
         // Then
-        assertThat(deleteResult).isEqualTo(0);
+        assertThat(deleteResult).isEqualTo(1);
+        //assertThat(deleteResult).isEqualTo(0);
     }
 
     @Test
@@ -103,6 +114,7 @@ public class ExpenseDataAccessServiceTest {
         int updateResult = underTest.updateExpenseById(id, expense);
 
         // Then
-        assertThat(updateResult).isEqualTo(0);
+        assertThat(updateResult).isEqualTo(1);
+        //assertThat(updateResult).isEqualTo(0);
     }
 }
