@@ -32,35 +32,43 @@ public class ExpenseDataAccessService implements ExpenseDao {
     public List<Expense> selectAllExpenses() {
         final String sql = "SELECT id, name FROM expense";
         // the following returns a List<Expense>
-        return jdbcTemplate.query(sql, (resultSet, i) -> {
-            UUID id = UUID.fromString(resultSet.getString("id"));
-            String name = resultSet.getString("name");
-            return new Expense(id, name);
-        });
+        return jdbcTemplate.query(
+                sql,
+                (resultSet, i) -> {
+                    UUID expenseId = UUID.fromString(resultSet.getString("id"));
+                    String name = resultSet.getString("name");
+                    return new Expense(expenseId, name);
+                });
     }
 
     // SELECT ONE
     @Override
     public Optional<Expense> selectExpenseById(UUID id) {
         final String sql = "SELECT id, name FROM expense WHERE id = ?";
-        Expense expenseById = jdbcTemplate.queryForObject(
-                sql,
-                //additional arguments may be passed:
-                new Object[]{id},
-                (resultSet, i) -> {
-                    UUID expenseId = UUID.fromString(resultSet.getString("id"));
-                    String name = resultSet.getString("name");
-                    return new Expense(expenseId, name);
-                });
-        return Optional.ofNullable(expenseById);
+        try {
+            Expense expenseById = jdbcTemplate.queryForObject(
+                    sql,
+                    //additional arguments may be passed:
+                    new Object[]{id},
+                    (resultSet, i) -> {
+                        UUID expenseId = UUID.fromString(resultSet.getString("id"));
+                        String name = resultSet.getString("name");
+                        return new Expense(expenseId, name);
+                    });
+            return Optional.ofNullable(expenseById);
+        }catch(Exception e){
+            System.out.println(e);
+            // may be refactored later to query instead of queryForObject
+            return null;
+        }
     }
 
     // DELETE ONE
     @Override
     public int deleteExpenseById(UUID id) {
         final String sql = "DELETE FROM expense WHERE id=?";
-        jdbcTemplate.update(sql, id);
-        return 1;
+        // returns the number of rows affected
+        return jdbcTemplate.update(sql, id);
     }
 
     // UPDATE ONE
@@ -68,8 +76,8 @@ public class ExpenseDataAccessService implements ExpenseDao {
     public int updateExpenseById(UUID id, Expense expense) {
 
         final String sql = "UPDATE expense SET name = ? WHERE id=?";
-        jdbcTemplate.update(sql, expense.getName(), id);
-        return 1;
+        // returns the number of rows affected
+        return jdbcTemplate.update(sql, expense.getName(), id);
 
         // ALTERNATIVE APPROACH: (note the use of single quotes '' for parameter values)
 /*

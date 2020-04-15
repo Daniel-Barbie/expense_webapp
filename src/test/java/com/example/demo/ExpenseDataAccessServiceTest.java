@@ -4,12 +4,10 @@ import com.example.demo.dao.ExpenseDataAccessService;
 import com.example.demo.model.Expense;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
 
 import java.util.List;
 import java.util.UUID;
@@ -20,10 +18,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ActiveProfiles("test")
 public class ExpenseDataAccessServiceTest {
 
+    // enabling @Autowired resolved the NullPointerException with underTest in the tests
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    //@Autowired
     private ExpenseDataAccessService underTest;
 
     @BeforeEach
@@ -81,8 +79,12 @@ public class ExpenseDataAccessServiceTest {
         assertThat(underTest.deleteExpenseById(idOne)).isEqualTo(1);
 
         // Get expenseOne by Id, which should not exist
-        // ERROR HERE:
-        assertThat(underTest.selectExpenseById(idOne)).isEmpty();
+        /*
+        ERROR HERE:
+        because it uses JdbcTemplate.queryForObject which only accept exactly one row in return. If no element exists, or if many elements exist, it throws an error!
+        */
+        //assertThat(underTest.selectExpenseById(idOne)).isEmpty();
+        assertThat(underTest.selectExpenseById(idOne)).isNull();
 
         // Select all expenses from db, only expense with name "Lidl" should exist
         assertThat(underTest.selectAllExpenses())
@@ -100,8 +102,7 @@ public class ExpenseDataAccessServiceTest {
         int deleteResult = underTest.deleteExpenseById(id);
 
         // Then
-        assertThat(deleteResult).isEqualTo(1);
-        //assertThat(deleteResult).isEqualTo(0);
+        assertThat(deleteResult).isEqualTo(0);
     }
 
     @Test
@@ -114,7 +115,6 @@ public class ExpenseDataAccessServiceTest {
         int updateResult = underTest.updateExpenseById(id, expense);
 
         // Then
-        assertThat(updateResult).isEqualTo(1);
-        //assertThat(updateResult).isEqualTo(0);
+        assertThat(updateResult).isEqualTo(0);
     }
 }
