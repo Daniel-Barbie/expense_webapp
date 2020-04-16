@@ -12,6 +12,8 @@ import java.util.UUID;
 @Repository("postgres")
 public class ExpenseDataAccessService implements ExpenseDao {
 
+    // necessary?
+    @Autowired
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired

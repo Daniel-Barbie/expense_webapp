@@ -19,7 +19,7 @@ services:
         source: postgres-data
         # note: this target is the default target of the postgres image for creating an anonymous volume
         # if we specify a different target, postgres will still create an anonymous volume every run and NOT
-        # safe into our named volume
+        # save into our named volume
         target: /var/lib/postgresql/data
 
   spring:
