@@ -30,10 +30,6 @@ services:
     ports:
       - "8080:8080"
     #hostname: spring # unsure if needed
-    volumes:
-      - type: volume
-        source: spring-data
-        target: /var/lib/spring/data
     depends_on:
       - postgres
 
@@ -45,4 +41,3 @@ networks:
 # not our case here, but let's still leave it as it is
 volumes:
   postgres-data: # named volumes can be managed easier using docker-compose
-  spring-data:
