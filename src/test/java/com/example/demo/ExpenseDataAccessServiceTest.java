@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -35,11 +36,13 @@ public class ExpenseDataAccessServiceTest {
 
         // Given Expense: name "Rewe"
         UUID idOne = UUID.randomUUID();
-        Expense expenseOne = new Expense(idOne, "Rewe");
+        UUID useridOne = UUID.randomUUID();
+        Expense expenseOne = new Expense(idOne, "Rewe", 10, useridOne, LocalDate.parse("2020-04-01"));
 
         // Given Expense: name "Lidl"
         UUID idTwo = UUID.randomUUID();
-        Expense expenseTwo = new Expense(idTwo, "Lidl");
+        UUID useridTwo = UUID.randomUUID();
+        Expense expenseTwo = new Expense(idTwo, "Lidl", 5, useridTwo, LocalDate.parse("2020-03-01"));
 
         // Insert into db
         underTest.insertExpense(idOne, expenseOne);
@@ -65,7 +68,7 @@ public class ExpenseDataAccessServiceTest {
                 .containsExactlyInAnyOrder(expenseOne, expenseTwo);
 
         // Updated expense with name "Aldi" instead of "Rewe"
-        Expense expenseUpdate = new Expense(idOne, "Aldi");
+        Expense expenseUpdate = new Expense(idOne, "Aldi", 10, useridOne, LocalDate.parse("2020-04-01"));
 
         // Update expense in db
         assertThat(underTest.updateExpenseById(idOne, expenseUpdate)).isEqualTo(1);
@@ -109,7 +112,7 @@ public class ExpenseDataAccessServiceTest {
     public void willReturn0IfNoExpenseFoundToUpdate() {
         // Given
         UUID id = UUID.randomUUID();
-        Expense expense = new Expense(id,"Hornbach not in Db");
+        Expense expense = new Expense(id,"Hornbach not in Db", 99.99, UUID.randomUUID(), LocalDate.parse("9999-01-01"));
 
         // When
         int updateResult = underTest.updateExpenseById(id, expense);

@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -24,29 +25,33 @@ public class ExpenseDataAccessService implements ExpenseDao {
     // INSERT ONE
     @Override
     public int insertExpense(UUID id, Expense expense) {
-        final String sql = "INSERT INTO expense (id, name) VALUES (?, ?)";
-        jdbcTemplate.update(sql, id, expense.getName());
+        final String sql = "INSERT INTO expense (id, name, amount, userid, date) VALUES (?, ?, ?, ?, ?)";
+        jdbcTemplate.update(sql, id, expense.getName(), expense.getAmount(), expense.getUserid(), expense.getDate());
         return 1;
     }
 
     // SELECT ALL
     @Override
     public List<Expense> selectAllExpenses() {
-        final String sql = "SELECT id, name FROM expense";
+        final String sql = "SELECT id, name, amount, userid, date FROM expense";
         // the following returns a List<Expense>
         return jdbcTemplate.query(
                 sql,
                 (resultSet, i) -> {
                     UUID expenseId = UUID.fromString(resultSet.getString("id"));
                     String name = resultSet.getString("name");
-                    return new Expense(expenseId, name);
+                    double amount = Double.valueOf(resultSet.getString("amount"));
+                    UUID userid = UUID.fromString(resultSet.getString("userid"));
+                    LocalDate date = LocalDate.parse(resultSet.getString("date"));
+
+                    return new Expense(expenseId, name, amount, userid, date);
                 });
     }
 
     // SELECT ONE
     @Override
     public Optional<Expense> selectExpenseById(UUID id) {
-        final String sql = "SELECT id, name FROM expense WHERE id = ?";
+        final String sql = "SELECT id, name, amount, userid, date FROM expense WHERE id = ?";
         try {
             Expense expenseById = jdbcTemplate.queryForObject(
                     sql,
@@ -55,7 +60,11 @@ public class ExpenseDataAccessService implements ExpenseDao {
                     (resultSet, i) -> {
                         UUID expenseId = UUID.fromString(resultSet.getString("id"));
                         String name = resultSet.getString("name");
-                        return new Expense(expenseId, name);
+                        double amount = Double.valueOf(resultSet.getString("amount"));
+                        UUID userid = UUID.fromString(resultSet.getString("userid"));
+                        LocalDate date = LocalDate.parse(resultSet.getString("date"));
+
+                        return new Expense(expenseId, name, amount, userid, date);
                     });
             return Optional.ofNullable(expenseById);
         }catch(Exception e){
@@ -77,9 +86,9 @@ public class ExpenseDataAccessService implements ExpenseDao {
     @Override
     public int updateExpenseById(UUID id, Expense expense) {
 
-        final String sql = "UPDATE expense SET name = ? WHERE id=?";
+        final String sql = "UPDATE expense SET name = ?, amount = ?, userid = ?, date = ? WHERE id=?";
         // returns the number of rows affected
-        return jdbcTemplate.update(sql, expense.getName(), id);
+        return jdbcTemplate.update(sql, expense.getName(), expense.getAmount(), expense.getUserid(), expense.getDate(), id);
 
         // ALTERNATIVE APPROACH: (note the use of single quotes '' for parameter values)
 /*

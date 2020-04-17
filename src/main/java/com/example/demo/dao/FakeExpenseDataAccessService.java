@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+
 @Repository("fakeDao")
 public class FakeExpenseDataAccessService implements ExpenseDao {
 
@@ -15,7 +16,7 @@ public class FakeExpenseDataAccessService implements ExpenseDao {
 
     @Override
     public int insertExpense(UUID id, Expense expense) {
-        DB.add(new Expense(id,expense.getName()));
+        DB.add(new Expense(id,expense.getName(), expense.getAmount(), expense.getUserid(), expense.getDate()));
         return 1;
     }
 
@@ -50,14 +51,14 @@ public class FakeExpenseDataAccessService implements ExpenseDao {
                 .map(expense -> {
                     int indexOfExpenseToUpdate = DB.indexOf(expense);
                     if (indexOfExpenseToUpdate >= 0) {
-                        DB.set(indexOfExpenseToUpdate, new Expense(id, updatedExpense.getName()));
+                        DB.set(indexOfExpenseToUpdate, new Expense(id, updatedExpense.getName(), updatedExpense.getAmount(), updatedExpense.getUserid(), updatedExpense.getDate()));
                         return 1;
                     }
                     return 0;
                 })
                 .orElse(0);
     }
-
+}
     /*
      * Now what does it do: first of all, the ".orElse" at the end is a method of the "Optional" return value
      * of "selectExpenseById". It is returned when an Optional value is not present.
@@ -81,4 +82,4 @@ public class FakeExpenseDataAccessService implements ExpenseDao {
      * */
 
 
-}
+
