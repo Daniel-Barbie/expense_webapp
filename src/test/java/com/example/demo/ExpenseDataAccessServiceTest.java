@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import com.example.demo.api.exceptionhandling.ExpenseNotFoundException;
 import com.example.demo.dao.ExpenseDataAccessService;
 import com.example.demo.model.Expense;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 
 @SpringBootTest//(classes = ExpenseDataAccessService.class)
 @ActiveProfiles("test")
@@ -86,8 +88,20 @@ public class ExpenseDataAccessServiceTest {
         ERROR HERE:
         because it uses JdbcTemplate.queryForObject which only accept exactly one row in return. If no element exists, or if many elements exist, it throws an error!
         */
+
+        //expect
+        Throwable thrown = catchThrowable(() -> underTest.selectExpenseById(idOne));
+
+        //when
+        assertThat(thrown).isInstanceOf(ExpenseNotFoundException.class)
+                .hasNoCause()
+                .withFailMessage("Expense ID not found");
+
+        /*
+        Old handling of Errors, where we would not have a CustomGlobalExceptionHandler + ExpenseNotFoundException
+         */
         //assertThat(underTest.selectExpenseById(idOne)).isEmpty();
-        assertThat(underTest.selectExpenseById(idOne)).isNull();
+        //assertThat(underTest.selectExpenseById(idOne)).isNull();
 
         // Select all expenses from db, only expense with name "Lidl" should exist
         assertThat(underTest.selectAllExpenses())
@@ -95,7 +109,20 @@ public class ExpenseDataAccessServiceTest {
                 .usingFieldByFieldElementComparator()
                 .containsExactlyInAnyOrder(expenseTwo);
     }
+/*
+    @Test
+    public void willReturn0IfNoExpenseFoundToGet() {
+        // Given
+        UUID id = UUID.fromString("");
+        Expense expense = new Expense(id,"Hornbach not in Db", 99.99, UUID.randomUUID(), LocalDate.parse("9999-01-01"));
 
+        // When
+        Optional<Expense> updateResult = underTest.selectExpenseById(id);
+
+        // Then
+        assertThat(updateResult).isEmpty();
+    }
+*/
     @Test
     public void willReturn0IfNoExpenseFoundToDelete() {
         // Given

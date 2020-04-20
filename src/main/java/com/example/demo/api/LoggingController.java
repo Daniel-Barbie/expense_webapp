@@ -8,15 +8,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class LoggingController {
 
-    Logger logger = LogManager.getLogger(LoggingController.class);
+    Logger LOGGER = LogManager.getLogger(LoggingController.class);
 
     @RequestMapping("/api/v1/logtest")
     public String index() {
-        logger.trace("A TRACE Message");
-        logger.debug("A DEBUG Message");
-        logger.info("An INFO Message");
-        logger.warn("A WARN Message");
-        logger.error("An ERROR Message");
+        LOGGER.trace("A TRACE Message");
+        LOGGER.debug("A DEBUG Message");
+        LOGGER.info("An INFO Message");
+        LOGGER.warn("A WARN Message");
+        LOGGER.error("An ERROR Message");
 
         return "Howdy! Check out the Logs to see the output...";
     }

@@ -1,6 +1,10 @@
 package com.example.demo.dao;
 
+import com.example.demo.api.LoggingController;
+import com.example.demo.api.exceptionhandling.ExpenseNotFoundException;
 import com.example.demo.model.Expense;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -12,6 +16,8 @@ import java.util.UUID;
 
 @Repository("postgres")
 public class ExpenseDataAccessService implements ExpenseDao {
+
+    private static final Logger LOGGER = LogManager.getLogger(LoggingController.class);
 
     // necessary?
     @Autowired
@@ -54,23 +60,21 @@ public class ExpenseDataAccessService implements ExpenseDao {
         final String sql = "SELECT id, name, amount, userid, date FROM expense WHERE id = ?";
         try {
             Expense expenseById = jdbcTemplate.queryForObject(
-                    sql,
-                    //additional arguments may be passed:
-                    new Object[]{id},
-                    (resultSet, i) -> {
-                        UUID expenseId = UUID.fromString(resultSet.getString("id"));
-                        String name = resultSet.getString("name");
-                        double amount = Double.valueOf(resultSet.getString("amount"));
-                        UUID userid = UUID.fromString(resultSet.getString("userid"));
-                        LocalDate date = LocalDate.parse(resultSet.getString("date"));
+                sql,
+                //additional arguments may be passed:
+                new Object[]{id},
+                (resultSet, i) -> {
+                    UUID expenseId = UUID.fromString(resultSet.getString("id"));
+                    String name = resultSet.getString("name");
+                    double amount = Double.valueOf(resultSet.getString("amount"));
+                    UUID userid = UUID.fromString(resultSet.getString("userid"));
+                    LocalDate date = LocalDate.parse(resultSet.getString("date"));
 
-                        return new Expense(expenseId, name, amount, userid, date);
-                    });
-            return Optional.ofNullable(expenseById);
+                    return new Expense(expenseId, name, amount, userid, date);
+                });
+            return Optional.of(expenseById);
         }catch(Exception e){
-            System.out.println(e);
-            // may be refactored later to query instead of queryForObject
-            return null;
+            throw new ExpenseNotFoundException(id);
         }
     }
 

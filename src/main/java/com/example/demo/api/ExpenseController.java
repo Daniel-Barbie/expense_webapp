@@ -1,14 +1,15 @@
 package com.example.demo.api;
 
+import com.example.demo.api.exceptionhandling.ExpenseNotFoundException;
 import com.example.demo.model.Expense;
 import com.example.demo.service.ExpenseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RequestMapping("/api/v1/expense")
@@ -33,9 +34,9 @@ public class ExpenseController {
     }
 
     @GetMapping(path = "{id}")
-    public Expense selectExpenseById(@PathVariable("id") UUID id) {
-        return expenseService.selectExpenseById(id)
-                .orElse(null);
+    public Optional<Expense> selectExpenseById(@PathVariable("id") UUID id) {
+        return Optional.of(expenseService.selectExpenseById(id))
+                .orElseThrow(() -> new ExpenseNotFoundException(id));
     }
 
     @DeleteMapping(path = "{id}")

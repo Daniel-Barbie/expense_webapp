@@ -1,15 +1,16 @@
-package com.example.demo.dao;
-
-import com.example.demo.model.Expense;
-import org.springframework.stereotype.Repository;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+/*
+        package com.example.demo.dao;
 
 
-@Repository("fakeDao")
+        import com.example.demo.model.Expense;
+        import org.springframework.stereotype.Repository;
+
+        import java.util.ArrayList;
+        import java.util.List;
+        import java.util.Optional;
+        import java.util.UUID;
+
+        @Repository("fakeDao")
 public class FakeExpenseDataAccessService implements ExpenseDao {
 
     private static List<Expense> DB = new ArrayList<>();
@@ -26,7 +27,7 @@ public class FakeExpenseDataAccessService implements ExpenseDao {
     }
 
     @Override
-    public Optional<Expense> selectExpenseById(UUID id) {
+    public Expense selectExpenseById(UUID id) {
         return DB.stream()
                 .filter(expense -> expense.getId().equals(id))
                 .findFirst();
@@ -59,6 +60,9 @@ public class FakeExpenseDataAccessService implements ExpenseDao {
                 .orElse(0);
     }
 }
+
+ */
+
     /*
      * Now what does it do: first of all, the ".orElse" at the end is a method of the "Optional" return value
      * of "selectExpenseById". It is returned when an Optional value is not present.
