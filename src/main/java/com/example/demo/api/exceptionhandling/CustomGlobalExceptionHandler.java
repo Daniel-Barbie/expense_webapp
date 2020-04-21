@@ -38,10 +38,14 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
     public final ResponseEntity<Object> handleException(RuntimeException ex, WebRequest request) {
         HttpHeaders httpHeaders = new HttpHeaders();
 
+        /*
+        custom handling for each custom exception
+         */
         if (ex instanceof ExpenseNotFoundException) {
-            HttpStatus httpStatus = HttpStatus.NOT_FOUND;
+            HttpStatus httpStatus = HttpStatus.NOT_FOUND;   //404
             ExpenseNotFoundException enfe = (ExpenseNotFoundException) ex;
 
+            // use central response body customization for api exceptions
             return handleExpenseNotFoundException(enfe, httpHeaders, httpStatus, request);
         }else {
             if (LOGGER.isWarnEnabled()) {
@@ -60,6 +64,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
      * @param httpStatus The selected response status
      * @return a {@code ResponseEntity} instance
      */
+    // what is a singletonList?
     protected ResponseEntity<Object> handleExpenseNotFoundException(ExpenseNotFoundException ex, HttpHeaders httpHeaders, HttpStatus httpStatus, WebRequest request) {
         List<String> errors = Collections.singletonList(ex.getMessage());
         return handleExceptionInternal(ex, errors, httpHeaders, httpStatus, request);

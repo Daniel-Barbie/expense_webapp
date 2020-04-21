@@ -1,15 +1,26 @@
 package com.example.demo.api.exceptionhandling;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import com.example.demo.api.LoggingController;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.UUID;
 
-@ResponseStatus(value= HttpStatus.NOT_FOUND)  //404
 public class ExpenseNotFoundException extends RuntimeException{
+    private static final Logger LOGGER = LogManager.getLogger(LoggingController.class);
 
     public ExpenseNotFoundException(UUID id) {
+        /*
+        TL;DR:
+        super() calls the Parent class constructor. Here it passes the error message to a new RuntimeException Object
+
+        super(param) calls the Parent class constructor and passes the parameter
+        in this case, RuntimeException.java has a constructor that takes a String as a parameter which is called "message"
+        -> so the string we pass the super constructor is the Exception message that our CustomGlobalExceptionHandler
+        uses to pass a text response in JSON format to the API consumer
+         */
         super("Expense ID not found: " + id.toString());
+        LOGGER.debug("A client tried to access a nonexistent Expense with ID " + id);
     }
 
 }
