@@ -1,6 +1,5 @@
 package com.example.demo;
 
-import com.example.demo.api.exceptionhandling.ExpenseNotFoundException;
 import com.example.demo.dao.ExpenseDataAccessService;
 import com.example.demo.model.Expense;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,7 +14,6 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchThrowable;
 
 @SpringBootTest//(classes = ExpenseDataAccessService.class)
 @ActiveProfiles("test")
@@ -52,13 +50,13 @@ public class ExpenseDataAccessServiceTest {
 
         // Select "Rewe" from db
         assertThat(underTest.selectExpenseById(idOne))
-                .isPresent()
-                .hasValueSatisfying(expenseFromDb -> assertThat(expenseFromDb).isEqualToComparingFieldByField(expenseOne));
+                .isNotNull()
+                .isEqualToComparingFieldByField(expenseOne);
 
         // Select "Lidl" from db
         assertThat(underTest.selectExpenseById(idTwo))
-                .isPresent()
-                .hasValueSatisfying(expenseFromDb -> assertThat(expenseFromDb).isEqualToComparingFieldByField(expenseTwo));
+                .isNotNull()
+                .isEqualToComparingFieldByField(expenseTwo);
 
         // Select all Expenses from db
         List<Expense> expenses = underTest.selectAllExpenses();
@@ -76,18 +74,23 @@ public class ExpenseDataAccessServiceTest {
         assertThat(underTest.updateExpenseById(idOne, expenseUpdate)).isEqualTo(1);
 
         // Select updated Expense from db which should have the name "Aldi" instead of "Rewe"
-        assertThat(underTest.selectExpenseById(idOne))
-                .isPresent()
-                .hasValueSatisfying(expenseFromDb -> assertThat(expenseFromDb).isEqualToComparingFieldByField(expenseUpdate));
+        assertThat(underTest.selectExpenseById(idOne).getName())
+                .isNotNull()
+                .isEqualTo("Aldi");
 
         // Delete updated Expense with name "Aldi" from db
         assertThat(underTest.deleteExpenseById(idOne)).isEqualTo(1);
+
+        /////////////////////////////////////////////////////
 
         // Get expenseOne by Id, which should not exist
         /*
         ERROR HERE:
         because it uses JdbcTemplate.queryForObject which only accept exactly one row in return. If no element exists, or if many elements exist, it throws an error!
         */
+
+        ////////////////////////////////////
+        /* New handling (Optionals)
 
         //expect
         Throwable thrown = catchThrowable(() -> underTest.selectExpenseById(idOne));
@@ -97,11 +100,16 @@ public class ExpenseDataAccessServiceTest {
                 .hasNoCause()
                 .withFailMessage("Expense ID not found");
 
+         */
+        ////////////////////////////////////
+
         /*
         Old handling of Errors, where we would not have a CustomGlobalExceptionHandler + ExpenseNotFoundException
          */
         //assertThat(underTest.selectExpenseById(idOne)).isEmpty();
-        //assertThat(underTest.selectExpenseById(idOne)).isNull();
+        assertThat(underTest.selectExpenseById(idOne)).isNull();
+
+        //////////////////////////////////////
 
         // Select all expenses from db, only expense with name "Lidl" should exist
         assertThat(underTest.selectAllExpenses())

@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -28,7 +27,7 @@ public class ExpenseService {
         return expenseDao.selectAllExpenses();
     }
 
-    public Optional<Expense> selectExpenseById(UUID id) {
+    public Expense selectExpenseById(UUID id) {
         return expenseDao.selectExpenseById(id);
     }
 

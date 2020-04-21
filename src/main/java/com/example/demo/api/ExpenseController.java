@@ -34,8 +34,8 @@ public class ExpenseController {
     }
 
     @GetMapping(path = "{id}")
-    public Optional<Expense> selectExpenseById(@PathVariable("id") UUID id) {
-        return Optional.of(expenseService.selectExpenseById(id))
+    public Expense selectExpenseById(@PathVariable("id") UUID id) {
+        return Optional.ofNullable(expenseService.selectExpenseById(id))
                 .orElseThrow(() -> new ExpenseNotFoundException(id));
     }
 

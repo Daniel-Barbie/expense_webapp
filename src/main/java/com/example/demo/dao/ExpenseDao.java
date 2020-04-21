@@ -3,7 +3,6 @@ package com.example.demo.dao;
 import com.example.demo.model.Expense;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 public interface ExpenseDao {
@@ -17,7 +16,7 @@ public interface ExpenseDao {
 
         List<Expense> selectAllExpenses();
 
-        Optional<Expense> selectExpenseById(UUID id);
+        Expense selectExpenseById(UUID id);
 
         int deleteExpenseById(UUID id);
 

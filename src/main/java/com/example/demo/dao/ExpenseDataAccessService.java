@@ -1,17 +1,16 @@
 package com.example.demo.dao;
 
 import com.example.demo.api.LoggingController;
-import com.example.demo.api.exceptionhandling.ExpenseNotFoundException;
 import com.example.demo.model.Expense;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Repository("postgres")
@@ -56,7 +55,7 @@ public class ExpenseDataAccessService implements ExpenseDao {
 
     // SELECT ONE
     @Override
-    public Optional<Expense> selectExpenseById(UUID id) {
+    public Expense selectExpenseById(UUID id) {
         final String sql = "SELECT id, name, amount, userid, date FROM expense WHERE id = ?";
         try {
             Expense expenseById = jdbcTemplate.queryForObject(
@@ -72,9 +71,9 @@ public class ExpenseDataAccessService implements ExpenseDao {
 
                     return new Expense(expenseId, name, amount, userid, date);
                 });
-            return Optional.of(expenseById);
-        }catch(Exception e){
-            throw new ExpenseNotFoundException(id);
+            return expenseById;
+        }catch(EmptyResultDataAccessException e){
+            return null;
         }
     }
 
