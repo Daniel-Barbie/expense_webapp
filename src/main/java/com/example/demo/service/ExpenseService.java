@@ -19,8 +19,7 @@ public class ExpenseService {
         this.expenseDao = expenseDao;
     }
 
-    // to be refactored
-    public int addExpense(Expense expense) {
+    public int insertExpense(Expense expense) {
         return expenseDao.insertExpense(expense);
     }
 

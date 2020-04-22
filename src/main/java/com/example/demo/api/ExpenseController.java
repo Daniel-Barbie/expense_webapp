@@ -26,7 +26,7 @@ public class ExpenseController {
     // to be refactored: "insertExpense"
     @PostMapping
     public void addExpense(@Valid @NonNull @RequestBody Expense expense) {
-        expenseService.addExpense(expense);
+        expenseService.insertExpense(expense);
     }
 
     @GetMapping
