@@ -7,19 +7,31 @@ import java.util.UUID;
 
 public interface ExpenseDao {
 
-        int insertExpense(UUID id, Expense expense);
+    /**
+     * Defines insertExpense that takes UUID and Expense. To be overridden by implementations. <br>
+     * Is called by the default method {@link #insertExpense(Expense)}. <br>
+     * Should never be called directly, only to be called from the {@link #insertExpense(Expense)} default method!
+     */
+    int insertExpense(UUID id, Expense expense);
 
-        default int insertExpense(Expense expense) {
-            UUID id = UUID.randomUUID();
-            return insertExpense(id, expense);
-        }
+    /**
+     * Default method to insert an Expense.
+     * Defines a new UUID and therefore ensures a new Expense will always have an unused id.
+     *
+     * @param expense The Expense to be inserted
+     * @return {@code int}  - default return value of interface implementation should be 1.
+     */
+    default int insertExpense(Expense expense) {
+        UUID id = UUID.randomUUID();
+        return insertExpense(id, expense);
+    }
 
-        List<Expense> selectAllExpenses();
+    List<Expense> selectAllExpenses();
 
-        Expense selectExpenseById(UUID id);
+    Expense selectExpenseById(UUID id);
 
-        int deleteExpenseById(UUID id);
+    int deleteExpenseById(UUID id);
 
-        int updateExpenseById(UUID id, Expense expense);
+    int updateExpenseById(UUID id, Expense expense);
 
 }

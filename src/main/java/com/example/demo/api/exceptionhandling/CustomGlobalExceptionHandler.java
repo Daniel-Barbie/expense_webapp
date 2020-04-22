@@ -22,6 +22,9 @@ and http://zetcode.com/springboot/controlleradvice/
 as sources for the code
  */
 
+/**
+ * @author Daniel Barbie
+ */
 @ControllerAdvice
 public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler {
     private static final Logger LOGGER = LogManager.getLogger(LoggingController.class);
@@ -31,10 +34,10 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
      *
      * @param ex The target exception
      * @param request The current request
+     * @return a {@code ResponseEntity} instance
      */
     @ExceptionHandler(value
             = { ExpenseNotFoundException.class})
-
     public final ResponseEntity<Object> handleException(RuntimeException ex, WebRequest request) {
         HttpHeaders httpHeaders = new HttpHeaders();
 

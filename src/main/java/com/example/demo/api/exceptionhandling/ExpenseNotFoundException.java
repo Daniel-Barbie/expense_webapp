@@ -9,6 +9,11 @@ import java.util.UUID;
 public class ExpenseNotFoundException extends RuntimeException{
     private static final Logger LOGGER = LogManager.getLogger(LoggingController.class);
 
+    /**
+     * Exception to be thrown when a single Expense is queried for that does not exist
+     *
+     * @param id the Expense id
+     */
     public ExpenseNotFoundException(UUID id) {
         /*
         TL;DR:

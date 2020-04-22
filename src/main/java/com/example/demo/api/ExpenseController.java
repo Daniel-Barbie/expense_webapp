@@ -23,6 +23,7 @@ public class ExpenseController {
         this.expenseService = expenseService;
     }
 
+    // to be refactored: "insertExpense"
     @PostMapping
     public void addExpense(@Valid @NonNull @RequestBody Expense expense) {
         expenseService.addExpense(expense);

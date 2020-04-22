@@ -13,6 +13,9 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * @author Daniel Barbie
+ */
 @Repository("postgres")
 public class ExpenseDataAccessService implements ExpenseDao {
 
@@ -27,6 +30,18 @@ public class ExpenseDataAccessService implements ExpenseDao {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    /**
+     * Inserts a new Expense into the DB. Not to be called directly by a service, only via the default
+     * {@link com.example.demo.dao.ExpenseDao#insertExpense(Expense)} method.
+     *
+     * @param id A newly generated Expense id (UUID)
+     * @param expense The Expense
+     * @return {@code 1} - When finished
+     */
+    /*
+     * it may be smart to try and make this method "hidden" except for the method insertExpense(Expense) which is
+     * defined as a default in the Interface ExpenseDao
+     */
     // INSERT ONE
     @Override
     public int insertExpense(UUID id, Expense expense) {
@@ -35,6 +50,14 @@ public class ExpenseDataAccessService implements ExpenseDao {
         return 1;
     }
 
+    /**
+     * Queries for all Expenses
+     *
+     * @return {@code List<Expense>} - that includes all saved Expenses
+     */
+    /*
+    maybe a map / hasmap / linkedhasmap makes more sense here?
+     */
     // SELECT ALL
     @Override
     public List<Expense> selectAllExpenses() {
@@ -53,6 +76,12 @@ public class ExpenseDataAccessService implements ExpenseDao {
                 });
     }
 
+    /**
+     * Queries for a single Expense
+     *
+     * @param id The Expense id
+     * @return {@code Expense} or {@code null} - if the Expense id is not present in the DB
+     */
     // SELECT ONE
     @Override
     public Expense selectExpenseById(UUID id) {
@@ -77,6 +106,12 @@ public class ExpenseDataAccessService implements ExpenseDao {
         }
     }
 
+    /**
+     * Deletes a single Expense from the DB
+     *
+     * @param id The Expense id
+     * @return {@code int} - Number of rows affected (should be 0 or 1)
+     */
     // DELETE ONE
     @Override
     public int deleteExpenseById(UUID id) {
@@ -85,6 +120,12 @@ public class ExpenseDataAccessService implements ExpenseDao {
         return jdbcTemplate.update(sql, id);
     }
 
+    /**
+     *
+     * @param id The Expense id
+     * @param expense The updated Expense
+     * @return {@code int} - The number of rows affected
+     */
     // UPDATE ONE
     @Override
     public int updateExpenseById(UUID id, Expense expense) {
